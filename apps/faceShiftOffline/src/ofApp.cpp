@@ -10,7 +10,7 @@ void ofApp::setup() {
 	light.enable();
 	light.setPosition(+500, +500, +500);
     
-    lines = ofSplitString(ofBufferFromFile("SequenceLonger.txt"), "\n");
+    lines = ofSplitString(ofBufferFromFile("SequenceLonger_neutral.txt"), "\n");
     //cout << lines[0] << endl;
     
     player.parseFrames("SequenceLonger.txt");
@@ -28,6 +28,7 @@ void ofApp::setup() {
 int lastFame = -1;
 void ofApp::update() {
     
+
     
     int millis = snd.getPositionMS();
     
@@ -36,7 +37,8 @@ void ofApp::update() {
     //float t = vid.getDuration() * vid.getPosition();
     //cout << t << endl;
     
-    
+    cout <<  lines.size() << endl;
+
     faceShiftFrame frame =  player.getLineForTimeMillis(millis, false);  //player.getLineForTimeMillis(ofGetElapsedTimeMillis(), true);
     //cout << frame.frameNum << endl;
     
