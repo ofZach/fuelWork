@@ -16,6 +16,7 @@
 		926608501981A4BD00802FC1 /* ofxAssimpTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 926608491981A4BD00802FC1 /* ofxAssimpTexture.cpp */; };
 		926608B21982A52400802FC1 /* glm.c in Sources */ = {isa = PBXBuildFile; fileRef = 926608AD1982A52400802FC1 /* glm.c */; };
 		926608B31982A52400802FC1 /* ofxObjLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 926608B01982A52400802FC1 /* ofxObjLoader.cpp */; };
+		926608BC1982D30000802FC1 /* faceShiftPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 926608BA1982D30000802FC1 /* faceShiftPlayer.cpp */; };
 		960D20B191346612D5C05A6A /* ofxTCPClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF88F02779DD820913ACEA06 /* ofxTCPClient.cpp */; };
 		A30119C741990A4A6BA0B5A9 /* ofxFaceShift.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F341920757CD4365DF625FEC /* ofxFaceShift.cpp */; };
 		BBAB23CB13894F3D00AA2426 /* GLUT.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BBAB23BE13894E4700AA2426 /* GLUT.framework */; };
@@ -129,6 +130,8 @@
 		926608AE1982A52400802FC1 /* glm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glm.h; sourceTree = "<group>"; };
 		926608B01982A52400802FC1 /* ofxObjLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxObjLoader.cpp; sourceTree = "<group>"; };
 		926608B11982A52400802FC1 /* ofxObjLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxObjLoader.h; sourceTree = "<group>"; };
+		926608BA1982D30000802FC1 /* faceShiftPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = faceShiftPlayer.cpp; sourceTree = "<group>"; };
+		926608BB1982D30000802FC1 /* faceShiftPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = faceShiftPlayer.h; sourceTree = "<group>"; };
 		BBAB23BE13894E4700AA2426 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = ../../../libs/glut/lib/osx/GLUT.framework; sourceTree = "<group>"; };
 		BF88F02779DD820913ACEA06 /* ofxTCPClient.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = ofxTCPClient.cpp; path = ../../../addons/ofxNetwork/src/ofxTCPClient.cpp; sourceTree = SOURCE_ROOT; };
 		C8C9B823D7872F9CBF03A813 /* ofxTCPClient.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxTCPClient.h; path = ../../../addons/ofxNetwork/src/ofxTCPClient.h; sourceTree = SOURCE_ROOT; };
@@ -442,6 +445,8 @@
 		E4B69E1C0A3A1BDC003C02F2 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				926608BA1982D30000802FC1 /* faceShiftPlayer.cpp */,
+				926608BB1982D30000802FC1 /* faceShiftPlayer.h */,
 				E4B69E1D0A3A1BDC003C02F2 /* main.cpp */,
 				E4B69E1E0A3A1BDC003C02F2 /* ofApp.cpp */,
 				E4B69E1F0A3A1BDC003C02F2 /* ofApp.h */,
@@ -555,6 +560,7 @@
 				125506CD3E5F428AAFE5CC65 /* ofxTCPManager.cpp in Sources */,
 				66CA411C5A9664E27326BF36 /* ofxTCPServer.cpp in Sources */,
 				E2564CF7DDB3713772BB682E /* ofxUDPManager.cpp in Sources */,
+				926608BC1982D30000802FC1 /* faceShiftPlayer.cpp in Sources */,
 				A30119C741990A4A6BA0B5A9 /* ofxFaceShift.cpp in Sources */,
 				926608B31982A52400802FC1 /* ofxObjLoader.cpp in Sources */,
 				9266084F1981A4BD00802FC1 /* ofxAssimpModelLoader.cpp in Sources */,

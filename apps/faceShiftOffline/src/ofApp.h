@@ -2,6 +2,7 @@
 
 #include "ofMain.h"
 #include "ofxFaceShift.h"
+#include "faceShiftPlayer.h"
 
 class ofApp : public ofBaseApp{
 public:
@@ -14,9 +15,15 @@ public:
 	ofxFaceShift faceShift;
 	
 	bool useEasyCam;
+	faceShiftPlayer player;
+    
 	ofEasyCam cam;
 	ofCamera baseCamera;
 
 	ofLight light;
+    ofVideoPlayer vid;
+    ofSoundPlayer snd;
+    
+    
 };
 
