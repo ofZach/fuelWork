@@ -9,9 +9,14 @@ public:
 	void update();
 	void draw();
 	
+	void keyPressed(ofKeyEventArgs& args);
+
 	ofxFaceShift faceShift;
 	
+	bool useEasyCam;
 	ofEasyCam cam;
+	ofCamera baseCamera;
+
 	ofLight light;
 };
 
