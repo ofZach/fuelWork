@@ -10,7 +10,7 @@ void ofApp::setup() {
 	light.enable();
 	light.setPosition(+500, +500, +500);
     
-    lines = ofSplitString(ofBufferFromFile("SequenceLonger.txt"), "\n");
+    lines = ofSplitString(ofBufferFromFile("SequenceLonger_neutral.txt"), "\n");
     //cout << lines[0] << endl;
     
     
@@ -18,7 +18,6 @@ void ofApp::setup() {
 }
 
 void ofApp::update() {
-    
     
     cout <<  lines.size() << endl;
     
