@@ -7,7 +7,7 @@ void ofApp::setup() {
 	faceShift.setup();
 	faceShift.import("OBJs");
 	
-	useEasyCam = true;
+	useEasyCam = false;
 
 	light.enable();
 	light.setPosition(+500, +500, +500);
@@ -57,39 +57,40 @@ void ofApp::draw(){
     
     ofSetColor(255,255,255);
     vid.draw(0,0);
-    
-	
+
 	if(useEasyCam){
 		ofBackground(128);
 		cam.begin();
-
 		//old way of moving head, commented this out for 
-		ofRotateX(180);
-		ofTranslate(faceShift.getPosition());
-		ofScale(-1, 1, 1); // for some reason the rotation matrix x is flipped
-		glMultMatrixf((GLfloat*) faceShift.getRotationMatrix().getPtr());
-		ofScale(-1, 1, 1); // then we flip it back
+		//ofRotateX(180);
+		//ofScale(-1, 1, 1); // for some reason the rotation matrix x is flipped
+		//glMultMatrixf((GLfloat*) faceShift.getRotationMatrix().getPtr());
+		//ofScale(-1, 1, 1); // then we flip it back
 	}
 	else{
 		ofBackground(0);
 		ofPushStyle();
+
 		ofSetColor(128);
 		ofRect(0,0,640,480);
 		ofPopStyle();
 
 		baseCamera.setPosition(0,0,0);
-		baseCamera.lookAt(ofVec3f(0,0,1));
+		baseCamera.lookAt(ofVec3f(0,0,-1));
+		//baseCamera.lookAt( faceShift.getPosition() );
+//		baseCamera.setNearClip(10);
+//		baseCamera.setFarClip(50000);
 		baseCamera.begin(ofRectangle(0,0,640,480));
-
-		ofTranslate(faceShift.getPosition());
-		ofMultMatrix(faceShift.getRotationMatrix());
-
+		//baseCamera.begin();
+		//cout << "position is " << faceShift.getPosition() << " " << mouseX << endl;
 	}
-	cout << "position is " << faceShift.getPosition() << " " << mouseX << endl;
 
+	ofPushMatrix();
+	ofTranslate(faceShift.getPosition());
+	ofMultMatrix(faceShift.getRotationMatrix());
 
-	glEnable(GL_DEPTH_TEST);
-	
+	ofEnableDepthTest();
+
 	ofEnableLighting();
 	ofSetColor(255);
 	faceShift.getBlendMesh().draw();
@@ -97,14 +98,21 @@ void ofApp::draw(){
 	ofDisableLighting();
 	ofSetColor(0);
 	faceShift.getBlendMesh().drawWireframe();
+	ofPopMatrix();
 	
+//	ofNoFill();
+//	ofSphere( faceShift.getPosition() * (1.0*mouseX/ofGetWidth()), 20 );
+//	ofSphere( ofVec3f(0,0,0), 20 );	
+//	ofFill();
+
+	ofDisableDepthTest();
+
 	if(useEasyCam){
 		cam.end();
 	}
 	else{
 		baseCamera.end();
 	}
-
 }
 
 void ofApp::keyPressed(ofKeyEventArgs& args){
