@@ -7,7 +7,7 @@ void ofApp::setup() {
 	faceShift.setup();
 	faceShift.import("OBJs");
 	
-	useEasyCam = false;
+	useEasyCam = true;
 
 	light.enable();
 	light.setPosition(+500, +500, +500);
@@ -63,11 +63,12 @@ void ofApp::draw(){
 		ofBackground(128);
 		cam.begin();
 
-//		ofRotateX(180);
-//		ofTranslate(faceShift.getPosition());
-//		ofScale(-1, 1, 1); // for some reason the rotation matrix x is flipped
-//		glMultMatrixf((GLfloat*) faceShift.getRotationMatrix().getPtr());
-//		ofScale(-1, 1, 1); // then we flip it back
+		//old way of moving head, commented this out for 
+		ofRotateX(180);
+		ofTranslate(faceShift.getPosition());
+		ofScale(-1, 1, 1); // for some reason the rotation matrix x is flipped
+		glMultMatrixf((GLfloat*) faceShift.getRotationMatrix().getPtr());
+		ofScale(-1, 1, 1); // then we flip it back
 	}
 	else{
 		ofBackground(0);
@@ -80,12 +81,12 @@ void ofApp::draw(){
 		baseCamera.lookAt(ofVec3f(0,0,1));
 		baseCamera.begin(ofRectangle(0,0,640,480));
 
+		ofTranslate(faceShift.getPosition());
+		ofMultMatrix(faceShift.getRotationMatrix());
 
 	}
 	cout << "position is " << faceShift.getPosition() << " " << mouseX << endl;
 
-	ofTranslate(faceShift.getPosition() * mouseX);
-	ofMultMatrix(faceShift.getRotationMatrix());
 
 	glEnable(GL_DEPTH_TEST);
 	
