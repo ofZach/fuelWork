@@ -94,6 +94,7 @@ void ofApp::draw(){
 		ofMultMatrix(extrinsics);		
 	}
 
+	//thi is alexander specific translation copied from the FBX file. Not convinced of the units
 	ofVec3f neckTranslation(0.01883798, -1.526634, -0.6242198);
 	ofMultMatrix(faceShift.getRotationMatrix());
 	ofTranslate(-neckTranslation);
