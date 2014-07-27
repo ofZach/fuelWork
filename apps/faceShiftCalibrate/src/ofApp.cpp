@@ -14,22 +14,23 @@ void ofApp::setup() {
 
 	//depthCalib.load(dataPath + "calibration/depthCalib.yml");
 	loadCalibration(
-			dataPath + "calibration/rgbCalib.yml", 
-			dataPath + "calibration/depthCalib.yml", 
-			dataPath + "calibration/rotationDepthToRGB.yml", 
-			dataPath + "calibration/translationDepthToRGB.yml");
+			dataPath + "saturday_test_two/matrices/rgbCalib.yml", 
+			dataPath + "saturday_test_two/matrices/depthCalib.yml", 
+			dataPath + "saturday_test_two/matrices/rotationDepthToRGB.yml", 
+			dataPath + "saturday_test_two/matrices/translationDepthToRGB.yml");
 	
 	faceShift.setup();
 	faceShift.import(dataPath + "OBJs");
-	string parseFile = dataPath + "20140725_AlexanderTest.txt";
+	string parseFile = dataPath + "saturday_test_two/20140725_AlexanderFunTimeSaturdayThree.txt";
     lines = ofSplitString(ofBufferFromFile(parseFile), "\n");
 	player.parseFrames(parseFile);
     faceShift.parse(lines[0]);
 
-	testOverlay.loadImage(dataPath + "testDepthFrame.png");
+	testOverlay.loadImage(dataPath + "/saturday_test_two/frametest_saturday_2.png");
 
-	backdrop.loadMovie(dataPath + "alexander_small.mov");
+	backdrop.loadMovie(dataPath + "saturday_test_two/20140725_AlexanderFunTimeSaturdayThree.mov");
 	backdrop.play();
+	backdrop.setVolume(0);
 
 	targetFbo.allocate(rgbCalibration.getDistortedIntrinsics().getImageSize().width,
 					   rgbCalibration.getDistortedIntrinsics().getImageSize().height,GL_RGB);
@@ -69,12 +70,15 @@ void ofApp::draw(){
 	ofPushStyle();
 	ofSetColor(255);
 	//cout << "BLEEP BLEEP " << backdrop.getPosition() << endl;
-	backdrop.draw(0,0,2400,1350);
+	backdrop.draw(0,0);
 	ofPopStyle();
 	if(useEasyCam){
 		cam.begin();
 	}
 	else{
+		ofVec3f camPos(0,0,0);
+		camPos = extrinsics * camPos;
+
 		baseCamera.setPosition(0,0,0);
 		baseCamera.lookAt(ofVec3f(0,0,-1));
 		baseCamera.setFov( rgbCalibration.getDistortedIntrinsics().getFov().y );
@@ -90,9 +94,10 @@ void ofApp::draw(){
 		ofMultMatrix(extrinsics);		
 	}
 
-	ofTranslate(faceShift.getPosition());
+	ofVec3f neckTranslation(0.01883798, -1.526634, -0.6242198);
+	ofTranslate(-neckTranslation*100);
 	ofMultMatrix(faceShift.getRotationMatrix());
-
+	ofTranslate(faceShift.getPosition());
 
 	ofSetColor(255);
 	faceShift.getBlendMesh().draw();
