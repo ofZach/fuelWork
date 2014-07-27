@@ -60,6 +60,12 @@ Desktop.ini
 *.pdb
 *.exe
 *.lib
+*.log
+
+*.wav
+*.mov
+*.mp4
+*.jpg
 
 #Android
 .csettings

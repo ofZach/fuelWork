@@ -12,7 +12,7 @@ void ofApp::setup() {
 	light.enable();
 	light.setPosition(+500, +500, +500);
     
-	string parseFile = "SequenceLonger_absolute_mm.txt";
+	string parseFile = "20140725_AlexanderTest.txt";
     lines = ofSplitString(ofBufferFromFile(parseFile), "\n");
 	player.parseFrames(parseFile);
     
@@ -77,21 +77,18 @@ void ofApp::draw(){
 
 		baseCamera.setPosition(0,0,0);
 		baseCamera.lookAt(ofVec3f(0,0,-1));
-		//baseCamera.lookAt( faceShift.getPosition() );
-//		baseCamera.setNearClip(10);
-//		baseCamera.setFarClip(50000);
+		//baseCamera.setFov( ofMap(mouseX,0,ofGetWidth(),20, 90, true) );
 		baseCamera.begin(ofRectangle(0,0,640,480));
-		//baseCamera.begin();
 		//cout << "position is " << faceShift.getPosition() << " " << mouseX << endl;
 	}
+
+
+	ofEnableDepthTest();
+	ofEnableLighting();
 
 	ofPushMatrix();
 	ofTranslate(faceShift.getPosition());
 	ofMultMatrix(faceShift.getRotationMatrix());
-
-	ofEnableDepthTest();
-
-	ofEnableLighting();
 	ofSetColor(255);
 	faceShift.getBlendMesh().draw();
 	
@@ -105,6 +102,7 @@ void ofApp::draw(){
 //	ofSphere( ofVec3f(0,0,0), 20 );	
 //	ofFill();
 
+	ofDisableLighting();
 	ofDisableDepthTest();
 
 	if(useEasyCam){
