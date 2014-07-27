@@ -95,8 +95,8 @@ void ofApp::draw(){
 	}
 
 	ofVec3f neckTranslation(0.01883798, -1.526634, -0.6242198);
-	ofTranslate(-neckTranslation*100);
 	ofMultMatrix(faceShift.getRotationMatrix());
+	ofTranslate(-neckTranslation);
 	ofTranslate(faceShift.getPosition());
 
 	ofSetColor(255);
