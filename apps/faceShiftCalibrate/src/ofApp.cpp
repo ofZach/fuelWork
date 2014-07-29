@@ -44,9 +44,12 @@ void ofApp::update() {
 	//int millis = ofMap(mouseX, 0, ofGetWidth(), 0, player.getDurationMillis(), true);
 	int faceShiftClapMillis = 6168.22;
 	int videoClapMillis = 2.3499*1000;
-	//6168.22;
+	
+	//int offsetShift = ofMap(mouseX,0, ofGetWidth(), -500, 500, true);
+	//cout << offsetShift << endl;
+	int offsetShift = 193;
 
-	int millis = backdrop.getPosition() * backdrop.getDuration() * 1000 + (faceShiftClapMillis - videoClapMillis);// - ;
+	int millis = backdrop.getPosition() * backdrop.getDuration() * 1000 + (faceShiftClapMillis - videoClapMillis) + offsetShift;// - ;
 	faceShiftFrame frame = player.getLineForTimeMillis(millis, true);
 	if(frame.frameNum == 184){
 		cout << "frame millis is " << frame.frameTimeMillis << endl;
@@ -100,28 +103,29 @@ void ofApp::draw(){
 		ofVec3f camPos(0,0,0);
 		camPos = extrinsics * camPos;
 		if(ofGetKeyPressed('m')){
-			baseCamera.setTransformMatrix(extrinsics);			
-		}
-		else{
 			baseCamera.setPosition( ofVec3f(0,0,0) );
 			baseCamera.lookAt(ofVec3f(0,0,-1));
+		}
+		else{
+			baseCamera.setTransformMatrix(extrinsics);			
 		}
 		baseCamera.setFov( rgbCalibration.getDistortedIntrinsics().getFov().y );
 		baseCamera.begin(ofRectangle(0,0,targetFbo.getWidth(),targetFbo.getHeight()));
 	}
 
-
 	ofPushMatrix();
 
 
 	ofVec3f neckTranslation(0.01883798, -1.526634, -0.6242198);
-//	neckTranslation *= ofMap(mouseY, 0, ofGetHeight(), 0, 100, true);
-	neckTranslation *= 75;
+//	float multiplier = ofMap(mouseY, 0, ofGetHeight(), 0, 75, true); 
+//	cout << multiplier << endl;
+	float multiplier = 33; 
+	neckTranslation *= multiplier;
 
 	ofMatrix4x4 mat;
 	mat.translate(-neckTranslation);
 	mat *= faceShift.getRotationMatrix();
-	mat.translate(neckTranslation);
+	//mat.translate(neckTranslation);
 	mat.translate(faceShift.getPosition());
 	ofMultMatrix(mat);
 
@@ -202,23 +206,8 @@ bool ofApp::loadCalibration(string rgbIntrinsicsPath,
 
 	ofxCv::loadMat(rotationDepthToRGB, rotationPath);
 	ofxCv::loadMat(translationDepthToRGB, translationPath);
+	//rotationDepthToRGB.at<double>(0,1) *= -1;
 
-	//NO LONGER USED------
-	/*
-	depthToRGBView = ofxCv::makeMatrix(rotationDepthToRGB, translationDepthToRGB);
-
-	ofPushView();
-	rgbCalibration.getDistortedIntrinsics().loadProjectionMatrix();
-	glGetFloatv(GL_PROJECTION_MATRIX, rgbProjection.getPtr());
-	ofPopView();
-
-	ofPushView();
-	depthCalibration.getDistortedIntrinsics().loadProjectionMatrix();
-	glGetFloatv(GL_PROJECTION_MATRIX, depthProjection.getPtr());
-	ofPopView();
-	rgbMatrix = (depthToRGBView * rgbProjection);
-	*/
-	///-------
 	
 	//	Point2d fov = depthCalibration.getUndistortedIntrinsics().getFov();
 	//	fx = tanf(ofDegToRad(fov.x) / 2) * 2;

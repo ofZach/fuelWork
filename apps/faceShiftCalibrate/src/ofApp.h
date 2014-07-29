@@ -33,10 +33,6 @@ public:
     ofxCv::Calibration depthCalibration, rgbCalibration;
 	cv::Mat rotationDepthToRGB, translationDepthToRGB;
 
-	//ofMatrix4x4 depthToRGBView;
-	//ofMatrix4x4 rgbProjection;
-	//ofMatrix4x4 rgbMatrix;
-	//ofMatrix4x4 depthProjection;
 
 	ofVec2f depthPrincipalPoint;
 	ofVec2f depthFOV;
