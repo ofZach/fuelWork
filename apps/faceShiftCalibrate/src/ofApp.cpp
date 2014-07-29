@@ -12,7 +12,6 @@ void ofApp::setup() {
 	light.enable();
 	light.setPosition(+500, +500, +500);
 
-	//depthCalib.load(dataPath + "calibration/depthCalib.yml");
 	loadCalibration(
 			dataPath + "saturday_test_two/matrices/rgbCalib.yml", 
 			dataPath + "saturday_test_two/matrices/depthCalib.yml", 
@@ -35,22 +34,23 @@ void ofApp::setup() {
 	targetFbo.allocate(rgbCalibration.getDistortedIntrinsics().getImageSize().width,
 					   rgbCalibration.getDistortedIntrinsics().getImageSize().height,GL_RGB);
 
-//    vid.loadMovie("time_lapse.mov");
-//    vid.play();
-//    vid.setPaused(true);
-//    snd.loadSound("SequenceLonger_withav.wav");
-//    snd.play();
-
 }
 
 int lastFame = -1;
 void ofApp::update() {
     
     //int millis = snd.getPositionMS();
-	int millis = ofGetElapsedTimeMillis();
-    faceShiftFrame frame = player.getLineForTimeMillis(millis, true);
-	
-	
+	//int millis = ofGetElapsedTimeMillis();
+	//int millis = ofMap(mouseX, 0, ofGetWidth(), 0, player.getDurationMillis(), true);
+	int faceShiftClapMillis = 6168.22;
+	int videoClapMillis = 2.3499*1000;
+	//6168.22;
+
+	int millis = backdrop.getPosition() * backdrop.getDuration() * 1000 + (faceShiftClapMillis - videoClapMillis);// - ;
+	faceShiftFrame frame = player.getLineForTimeMillis(millis, true);
+	if(frame.frameNum == 184){
+		cout << "frame millis is " << frame.frameTimeMillis << endl;
+	}
     if (frame.frameNum != lastFame){
 		faceShift.parse(frame.frameString);
         lastFame = frame.frameNum;
@@ -67,40 +67,88 @@ void ofApp::draw(){
 	targetFbo.begin();
 	ofClear(0,0,0,0);
 
+	///draw the video layer behind
 	ofPushStyle();
 	ofSetColor(255);
-	//cout << "BLEEP BLEEP " << backdrop.getPosition() << endl;
 	backdrop.draw(0,0);
 	ofPopStyle();
+	////////////////////
+
 	if(useEasyCam){
 		cam.begin();
+		ofPushStyle();
+		ofPushMatrix();
+		ofNoFill();
+		ofColor(255,0,0);
+//		ofDrawSphere(depthToRGBTranslation, 10);
+		ofNode n;
+		n.setPosition(depthToRGBTranslation);
+		n.draw();
+		ofColor(0,250,0);
+		ofSphere(0,0,0,10);
+		ofFill();
+		ofSetColor(255,0,0);
+		if(ofGetKeyPressed('m')){
+			ofMultMatrix(extrinsics);
+		}
+		ofSetLineWidth(5);
+		ofLine(ofVec3f(0,0,0), ofVec3f(0,0,-100));
+		ofPopMatrix();
+		ofPopStyle();
 	}
 	else{
 		ofVec3f camPos(0,0,0);
 		camPos = extrinsics * camPos;
-
-		baseCamera.setPosition(0,0,0);
-		baseCamera.lookAt(ofVec3f(0,0,-1));
+		if(ofGetKeyPressed('m')){
+			baseCamera.setTransformMatrix(extrinsics);			
+		}
+		else{
+			baseCamera.setPosition( ofVec3f(0,0,0) );
+			baseCamera.lookAt(ofVec3f(0,0,-1));
+		}
 		baseCamera.setFov( rgbCalibration.getDistortedIntrinsics().getFov().y );
 		baseCamera.begin(ofRectangle(0,0,targetFbo.getWidth(),targetFbo.getHeight()));
 	}
 
-	ofEnableDepthTest();
-	ofEnableLighting();
 
 	ofPushMatrix();
 
-	if(ofGetKeyPressed('m')){
-		ofMultMatrix(extrinsics);		
-	}
+
+	ofVec3f neckTranslation(0.01883798, -1.526634, -0.6242198);
+//	neckTranslation *= ofMap(mouseY, 0, ofGetHeight(), 0, 100, true);
+	neckTranslation *= 75;
+
+	ofMatrix4x4 mat;
+	mat.translate(-neckTranslation);
+	mat *= faceShift.getRotationMatrix();
+	mat.translate(neckTranslation);
+	mat.translate(faceShift.getPosition());
+	ofMultMatrix(mat);
 
 	//thi is alexander specific translation copied from the FBX file. Not convinced of the units
-	ofVec3f neckTranslation(0.01883798, -1.526634, -0.6242198);
-	ofMultMatrix(faceShift.getRotationMatrix());
-	ofTranslate(-neckTranslation);
-	ofTranslate(faceShift.getPosition());
+	//ofMultMatrix(faceShift.getRotationMatrix());
+	//if(ofGetKeyPressed('n')){
+	//cout << "translating neck " << -neckTranslation*100 << endl;
+	//ofTranslate(-neckTranslation*100);
+//	ofMultMatrix(faceShift.getRotationMatrix().getInverse());
+	//ofTranslate(faceShift.getPosition());
 
+	///////////////////////////////
+	//DEBUG NECK STUFF
+	/*
+	ofPushStyle();
+	ofSetColor(255,0,0);
+	ofSphere(10);
+	ofSetColor(0,255,0);
+	ofSphere(neckTranslation*100,10);
+	ofPopStyle();
+	*/
+	////////////////////////////////
+	
 	ofSetColor(255);
+	ofEnableDepthTest();
+	ofEnableLighting();
+
 	faceShift.getBlendMesh().draw();
 	
 	ofDisableLighting();
@@ -199,6 +247,9 @@ bool ofApp::loadCalibration(string rgbIntrinsicsPath,
 	depthToRGBTranslation = ofVec3f(translationDepthToRGB.at<double>(0,0),
 									translationDepthToRGB.at<double>(1,0),
 									translationDepthToRGB.at<double>(2,0));
+//	cout << "translation is " << depthToRGBTranslation << endl;
+//	depthToRGBTranslation /= 100;
+
 	cv::Mat rx3;
 
 	if(rotationDepthToRGB.rows == 3 && rotationDepthToRGB.cols == 3) {
@@ -222,14 +273,27 @@ bool ofApp::loadCalibration(string rgbIntrinsicsPath,
 		memcpy(depthToRGBRotation, rotation3fv, sizeof(float)*3*3);
 	}
 	
+	ofMatrix4x4 rot;
+	/*
 	float mat4x4[16] = {
 		depthToRGBRotation[0],depthToRGBRotation[1],depthToRGBRotation[2],0,
 		depthToRGBRotation[3],depthToRGBRotation[4],depthToRGBRotation[5],0,
 		depthToRGBRotation[6],depthToRGBRotation[7],depthToRGBRotation[8],0,
 		depthToRGBTranslation.x,depthToRGBTranslation.y,depthToRGBTranslation.z,1
 	};
-	
 	extrinsics = ofMatrix4x4(mat4x4);
+	*/
+	
+	float mat4x4[16] = {
+		depthToRGBRotation[0],depthToRGBRotation[1],depthToRGBRotation[2],0,
+		depthToRGBRotation[3],depthToRGBRotation[4],depthToRGBRotation[5],0,
+		depthToRGBRotation[6],depthToRGBRotation[7],depthToRGBRotation[8],0,
+		0,0,0,1
+	};
+
+	extrinsics = ofMatrix4x4(mat4x4).getInverse();
+	extrinsics.translate(depthToRGBTranslation);
+	
 
 	//windows seems to load these differently sometimes
 	cv::Mat dis = rgbCalibration.getDistCoeffs();
@@ -246,16 +310,15 @@ bool ofApp::loadCalibration(string rgbIntrinsicsPath,
 		distortionP = ofVec2f(dis.at<double>(0,2),dis.at<double>(0,3));	
 	}
 
-	//distortionK = ofVec3f(dis.at<double>(0,0),
-	//					  dis.at<double>(0,1),
-	//					  dis.rows == 5 ? dis.at<double>(0,4) : 0);
-	//distortionP = ofVec2f(dis.at<double>(2,0),dis.at<double>(3,0));
-
 	return true;
 }
 
 void ofApp::keyPressed(ofKeyEventArgs& args){
 	if(args.key == ' '){
 		useEasyCam = !useEasyCam;
+	}
+
+	if(args.key == '1'){
+		cout << backdrop.getCurrentFrame() << " " << backdrop.getDuration() * backdrop.getPosition()  << endl;
 	}
 }
