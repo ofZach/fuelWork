@@ -1,4 +1,6 @@
 #include "ofApp.h"
+#include "ofxObjLoader.h"
+#include "ofxBinaryMesh.h"
 
 vector < string > lines ;
 
@@ -18,14 +20,25 @@ void ofApp::setup() {
 			dataPath + "saturday_test_two/matrices/rotationDepthToRGB.yml", 
 			dataPath + "saturday_test_two/matrices/translationDepthToRGB.yml");
 	
-	faceShift.setup();
-	faceShift.import(dataPath + "OBJs");
-	string parseFile = dataPath + "saturday_test_two/20140725_AlexanderFunTimeSaturdayThree.txt";
-    lines = ofSplitString(ofBufferFromFile(parseFile), "\n");
-	player.parseFrames(parseFile);
-    faceShift.parse(lines[0]);
+	//faceShift.setup();
+	//faceShift.import(dataPath + "OBJs");
+	//string parseFile = dataPath + "saturday_test_two/20140725_AlexanderFunTimeSaturdayThree.txt";
+    //lines = ofSplitString(ofBufferFromFile(parseFile), "\n");
+	//player.parseFrames(parseFile);
+    //faceShift.parse(lines[0]);
 
 	testOverlay.loadImage(dataPath + "/saturday_test_two/frametest_saturday_2.png");
+
+	curMesh = 0;
+	ofDirectory dir(dataPath + "saturday_test_two/objsequence");
+	dir.allowExt("obm");
+	dir.listDir();
+	meshes.resize(dir.numFiles());
+	for(int i = 0; i < dir.numFiles(); i++){
+		cout << "cur obm Is " << i << endl;
+//		ofxObjLoader::load(dir.getPath(i), meshes[i], false, false);
+		ofxBinaryMesh::load(dir.getPath(i), meshes[i]);
+	}
 
 	backdrop.loadMovie(dataPath + "saturday_test_two/20140725_AlexanderFunTimeSaturdayThree.mov");
 	backdrop.play();
@@ -34,6 +47,16 @@ void ofApp::setup() {
 	targetFbo.allocate(rgbCalibration.getDistortedIntrinsics().getImageSize().width,
 					   rgbCalibration.getDistortedIntrinsics().getImageSize().height,GL_RGB);
 
+	//ofxObjLoader::load(dataPath + "saturday_test_two/unitytest5.obj", unityObjTestMesh, false, false);
+	//unityTestObjAssimp.loadModel(dataPath + "saturday_test_two/unitytest2.obj");
+
+
+	adjustGui = new ofxUISuperCanvas("ADJUST", 0,0, 300,500);
+	adjustGui->addMinimalSlider("ADJUST X", -50, 50, &adjustments.x);
+	adjustGui->addMinimalSlider("ADJUST Y", -50, 50, &adjustments.y);
+	adjustGui->addMinimalSlider("ADJUST Z", -50, 50, &adjustments.z);
+	adjustGui->loadSettings("adjustments.xml");
+//	adjust->load
 }
 
 int lastFame = -1;
@@ -50,14 +73,20 @@ void ofApp::update() {
 	int offsetShift = 193;
 
 	int millis = backdrop.getPosition() * backdrop.getDuration() * 1000 + (faceShiftClapMillis - videoClapMillis) + offsetShift;// - ;
+	
+	/*
 	faceShiftFrame frame = player.getLineForTimeMillis(millis, true);
 	if(frame.frameNum == 184){
 		cout << "frame millis is " << frame.frameTimeMillis << endl;
 	}
     if (frame.frameNum != lastFame){
+
 		faceShift.parse(frame.frameString);
         lastFame = frame.frameNum;
     }
+	*/
+
+	curMesh = ofClamp( (millis/1000.0) * 30.0, 0,meshes.size()-1);
 
 	//player.getLineForTimeMillis(ofGetElapsedTimeMillis(), true);
     //cout << frame.frameNum << endl;
@@ -115,21 +144,22 @@ void ofApp::draw(){
 
 	ofPushMatrix();
 
-
 	ofVec3f neckTranslation(0.01883798, -1.526634, -0.6242198);
-//	float multiplier = ofMap(mouseY, 0, ofGetHeight(), 0, 75, true); 
+	//float multiplier = ofMap(mouseY, 0, ofGetHeight(), 0, 75, true); 
 //	cout << multiplier << endl;
-	float multiplier = 33; 
-	neckTranslation *= multiplier;
+	float multiplier = 0; 
 
+	neckTranslation *= multiplier;
+	/*
 	ofMatrix4x4 mat;
 	mat.translate(-neckTranslation);
 	mat *= faceShift.getRotationMatrix();
 	//mat.translate(neckTranslation);
 	mat.translate(faceShift.getPosition());
 	ofMultMatrix(mat);
+	*/
 
-	//thi is alexander specific translation copied from the FBX file. Not convinced of the units
+	//this is alexander specific translation copied from the FBX file. Not convinced of the units
 	//ofMultMatrix(faceShift.getRotationMatrix());
 	//if(ofGetKeyPressed('n')){
 	//cout << "translating neck " << -neckTranslation*100 << endl;
@@ -153,13 +183,21 @@ void ofApp::draw(){
 	ofEnableDepthTest();
 	ofEnableLighting();
 
-	faceShift.getBlendMesh().draw();
+	//faceShift.getBlendMesh().draw();
 	
 	ofDisableLighting();
 	ofSetColor(0);
-	faceShift.getBlendMesh().drawWireframe();
+	//faceShift.getBlendMesh().drawWireframe();
 	ofPopMatrix();
 	
+	ofPushMatrix();
+	ofScale(-1,1,1);
+	ofTranslate(adjustments);
+
+	meshes[curMesh].drawWireframe();
+	ofPopMatrix();
+	//unityTestObjAssimp.drawFaces();
+
 	ofDisableLighting();
 	ofDisableDepthTest();
 
@@ -170,8 +208,6 @@ void ofApp::draw(){
 		baseCamera.end();
 	}
 
-
-
 	targetFbo.end();
 
 	ofRectangle videoRect(0,0,targetFbo.getWidth(),targetFbo.getHeight());
@@ -181,6 +217,10 @@ void ofApp::draw(){
 	ofSetColor(255);
 	targetFbo.getTextureReference().draw(videoRect);
 
+}
+
+void ofApp::exit(){
+	adjustGui->saveSettings("adjustments.xml");
 }
 
 bool ofApp::loadCalibration(string rgbIntrinsicsPath, 

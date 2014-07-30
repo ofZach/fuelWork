@@ -122,7 +122,7 @@ xcopy /e /i /y "$(ProjectDir)..\..\..\addons\ofxTonic\libs\sndfile\export\vs\*.d
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>src;..\..\..\addons\ofxFaceShift\src;..\..\..\addons\ofxNetwork\src;..\sharedCode;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;..\..\..\addons\ofxFaceShift\src;..\..\..\addons\ofxObjLoader\libs\glm;..\..\..\addons\ofxObjLoader\src;..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include;..\..\..\addons\ofxAssimpModelLoader\src;..\..\..\addons\ofxBinaryMesh\src;..\..\..\addons\ofxNetwork\src;..\sharedCode;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAs>CompileAsCpp</CompileAs>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
@@ -130,7 +130,8 @@ xcopy /e /i /y "$(ProjectDir)..\..\..\addons\ofxTonic\libs\sndfile\export\vs\*.d
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <AdditionalLibraryDirectories>..\..\..\addons\ofxKinectV2\libs\KCBv2\lib\x64;$(KINECTSDK20_DIR)\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\addons\ofxAssimpModelLoader\libs\assimp\lib\vs64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent />
     <PostBuildEvent />
@@ -166,7 +167,7 @@ xcopy /e /i /y "$(ProjectDir)..\..\..\addons\ofxTonic\libs\sndfile\export\vs\*.d
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>src;..\..\..\addons\ofxFaceShift\src;..\..\..\addons\ofxNetwork\src;..\sharedCode;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;..\..\..\addons\ofxFaceShift\src;..\..\..\addons\ofxObjLoader\libs\glm;..\..\..\addons\ofxObjLoader\src;..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include;..\..\..\addons\ofxAssimpModelLoader\src;..\..\..\addons\ofxBinaryMesh\src;..\..\..\addons\ofxNetwork\src;..\sharedCode;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAs>CompileAsCpp</CompileAs>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
@@ -177,7 +178,8 @@ xcopy /e /i /y "$(ProjectDir)..\..\..\addons\ofxTonic\libs\sndfile\export\vs\*.d
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <AdditionalLibraryDirectories>..\..\..\addons\ofxKinectV2\libs\KCBv2\lib\x64;$(KINECTSDK20_DIR)\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\addons\ofxAssimpModelLoader\libs\assimp\lib\vs64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent />
     <PostBuildEvent />
@@ -194,6 +196,43 @@ xcopy /e /i /y "$(ProjectDir)..\..\..\addons\ofxTonic\libs\sndfile\export\vs\*.d
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\aiAnim.h" />
+    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\aiAssert.h" />
+    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\aiCamera.h" />
+    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\aiColor4D.h" />
+    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\aiConfig.h" />
+    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\aiDefines.h" />
+    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\aiFileIO.h" />
+    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\aiLight.h" />
+    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\aiMaterial.h" />
+    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\aiMatrix3x3.h" />
+    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\aiMatrix4x4.h" />
+    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\aiMesh.h" />
+    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\aiPostProcess.h" />
+    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\aiQuaternion.h" />
+    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\aiScene.h" />
+    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\aiTexture.h" />
+    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\aiTypes.h" />
+    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\aiVector2D.h" />
+    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\aiVector3D.h" />
+    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\aiVersion.h" />
+    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp.h" />
+    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\assimp.hpp" />
+    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\Compiler\poppack1.h" />
+    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\Compiler\pushpack1.h" />
+    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\DefaultLogger.h" />
+    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\IOStream.h" />
+    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\IOSystem.h" />
+    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\Logger.h" />
+    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\LogStream.h" />
+    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\NullLogger.h" />
+    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\ProgressHandler.h" />
+    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\src\ofxAssimpAnimation.h" />
+    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\src\ofxAssimpMeshHelper.h" />
+    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\src\ofxAssimpModelLoader.h" />
+    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\src\ofxAssimpTexture.h" />
+    <ClInclude Include="..\..\..\addons\ofxAssimpModelLoader\src\ofxAssimpUtils.h" />
+    <ClInclude Include="..\..\..\addons\ofxBinaryMesh\src\ofxBinaryMesh.h" />
     <ClInclude Include="..\..\..\addons\ofxFaceShift\src\ofxFaceShift.h" />
     <ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxNetwork.h" />
     <ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxNetworkUtils.h" />
@@ -201,18 +240,34 @@ xcopy /e /i /y "$(ProjectDir)..\..\..\addons\ofxTonic\libs\sndfile\export\vs\*.d
     <ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxTCPManager.h" />
     <ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxTCPServer.h" />
     <ClInclude Include="..\..\..\addons\ofxNetwork\src\ofxUDPManager.h" />
+    <ClInclude Include="..\..\..\addons\ofxObjLoader\libs\glm\glm.h" />
+    <ClInclude Include="..\..\..\addons\ofxObjLoader\src\ofxObjLoader.h" />
     <ClInclude Include="..\sharedCode\faceShiftPlayer.h" />
     <ClInclude Include="src\ofApp.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\addons\ofxAssimpModelLoader\src\ofxAssimpAnimation.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxAssimpModelLoader\src\ofxAssimpMeshHelper.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxAssimpModelLoader\src\ofxAssimpModelLoader.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxAssimpModelLoader\src\ofxAssimpTexture.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxBinaryMesh\src\ofxBinaryMesh.cpp" />
     <ClCompile Include="..\..\..\addons\ofxFaceShift\src\ofxFaceShift.cpp" />
     <ClCompile Include="..\..\..\addons\ofxNetwork\src\ofxTCPClient.cpp" />
     <ClCompile Include="..\..\..\addons\ofxNetwork\src\ofxTCPManager.cpp" />
     <ClCompile Include="..\..\..\addons\ofxNetwork\src\ofxTCPServer.cpp" />
     <ClCompile Include="..\..\..\addons\ofxNetwork\src\ofxUDPManager.cpp" />
+    <ClCompile Include="..\..\..\addons\ofxObjLoader\libs\glm\glm.c" />
+    <ClCompile Include="..\..\..\addons\ofxObjLoader\src\ofxObjLoader.cpp" />
     <ClCompile Include="..\sharedCode\faceShiftPlayer.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\ofApp.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\aiColor4D.inl" />
+    <None Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\aiMaterial.inl" />
+    <None Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\aiMatrix3x3.inl" />
+    <None Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\aiMatrix4x4.inl" />
+    <None Include="..\..\..\addons\ofxAssimpModelLoader\libs\assimp\include\aiVector3D.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

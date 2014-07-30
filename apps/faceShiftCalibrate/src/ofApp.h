@@ -3,6 +3,8 @@
 #include "ofMain.h"
 #include "ofxFaceShift.h"
 #include "faceShiftPlayer.h"
+#include "ofxAssimpModelLoader.h"
+#include "ofxUI.h"
 
 #include "ofxCv.h"
 
@@ -11,7 +13,8 @@ public:
 	void setup();
 	void update();
 	void draw();
-	
+	void exit();
+
 	void keyPressed(ofKeyEventArgs& args);
 
 	ofxFaceShift faceShift;
@@ -33,6 +36,8 @@ public:
     ofxCv::Calibration depthCalibration, rgbCalibration;
 	cv::Mat rotationDepthToRGB, translationDepthToRGB;
 
+	ofxUISuperCanvas* adjustGui;
+	ofVec3f adjustments;
 
 	ofVec2f depthPrincipalPoint;
 	ofVec2f depthFOV;
@@ -54,7 +59,11 @@ public:
 	ofVideoPlayer backdrop;
 	ofFbo targetFbo;
 
+	ofxAssimpModelLoader unityTestObjAssimp;
+	ofMesh unityObjTestMesh;
 	ofImage testOverlay;
-	
+	vector<ofMesh> meshes;
+	//ofVbo curObjMesh;
+	int curMesh;
 };
 
