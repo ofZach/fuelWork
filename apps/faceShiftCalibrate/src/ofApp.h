@@ -3,7 +3,6 @@
 #include "ofMain.h"
 #include "ofxFaceShift.h"
 #include "faceShiftPlayer.h"
-#include "ofxAssimpModelLoader.h"
 #include "ofxUI.h"
 
 #include "ofxCv.h"
@@ -21,7 +20,8 @@ public:
 	
 	bool useEasyCam;
 	faceShiftPlayer player;
-    
+    int lastFrame;
+
 	ofEasyCam cam;
 	ofCamera baseCamera;
 
@@ -38,6 +38,13 @@ public:
 
 	ofxUISuperCanvas* adjustGui;
 	ofVec3f adjustments;
+	int offsetShiftMillis;
+	
+	bool showWireframe;
+	bool showFilled;
+
+	bool showObjSequence;
+	bool showBlendShape;
 
 	ofVec2f depthPrincipalPoint;
 	ofVec2f depthFOV;
@@ -59,11 +66,14 @@ public:
 	ofVideoPlayer backdrop;
 	ofFbo targetFbo;
 
-	ofxAssimpModelLoader unityTestObjAssimp;
 	ofMesh unityObjTestMesh;
 	ofImage testOverlay;
 	vector<ofMesh> meshes;
 	//ofVbo curObjMesh;
 	int curMesh;
+
+	void drawObjSequence();
+	void drawBlendShape();
+
 };
 

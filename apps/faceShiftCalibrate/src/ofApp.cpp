@@ -7,9 +7,11 @@ vector < string > lines ;
 static string dataPath = "../../../sharedData/";
 
 void ofApp::setup() {
+	
 	ofSetVerticalSync(true);
 	
 	useEasyCam = false;
+	lastFrame = -1;
 
 	light.enable();
 	light.setPosition(+500, +500, +500);
@@ -20,14 +22,14 @@ void ofApp::setup() {
 			dataPath + "saturday_test_two/matrices/rotationDepthToRGB.yml", 
 			dataPath + "saturday_test_two/matrices/translationDepthToRGB.yml");
 	
-	//faceShift.setup();
-	//faceShift.import(dataPath + "OBJs");
-	//string parseFile = dataPath + "saturday_test_two/20140725_AlexanderFunTimeSaturdayThree.txt";
-    //lines = ofSplitString(ofBufferFromFile(parseFile), "\n");
-	//player.parseFrames(parseFile);
-    //faceShift.parse(lines[0]);
-
-	testOverlay.loadImage(dataPath + "/saturday_test_two/frametest_saturday_2.png");
+	faceShift.setup();
+	faceShift.import(dataPath + "OBJs");
+	string parseFile = dataPath + "saturday_test_two/20140725_AlexanderFunTimeSaturdayThree.txt";
+    lines = ofSplitString(ofBufferFromFile(parseFile), "\n");
+	player.parseFrames(parseFile);
+    faceShift.parse(lines[0]);
+	
+	testOverlay.loadImage(dataPath + "saturday_test_two/frametest_saturday_2.png");
 
 	curMesh = 0;
 	ofDirectory dir(dataPath + "saturday_test_two/objsequence");
@@ -36,7 +38,6 @@ void ofApp::setup() {
 	meshes.resize(dir.numFiles());
 	for(int i = 0; i < dir.numFiles(); i++){
 		cout << "cur obm Is " << i << endl;
-//		ofxObjLoader::load(dir.getPath(i), meshes[i], false, false);
 		ofxBinaryMesh::load(dir.getPath(i), meshes[i]);
 	}
 
@@ -47,19 +48,23 @@ void ofApp::setup() {
 	targetFbo.allocate(rgbCalibration.getDistortedIntrinsics().getImageSize().width,
 					   rgbCalibration.getDistortedIntrinsics().getImageSize().height,GL_RGB);
 
-	//ofxObjLoader::load(dataPath + "saturday_test_two/unitytest5.obj", unityObjTestMesh, false, false);
-	//unityTestObjAssimp.loadModel(dataPath + "saturday_test_two/unitytest2.obj");
-
 
 	adjustGui = new ofxUISuperCanvas("ADJUST", 0,0, 300,500);
 	adjustGui->addMinimalSlider("ADJUST X", -50, 50, &adjustments.x);
 	adjustGui->addMinimalSlider("ADJUST Y", -50, 50, &adjustments.y);
 	adjustGui->addMinimalSlider("ADJUST Z", -50, 50, &adjustments.z);
+	adjustGui->addIntSlider("TIME OFFSET", -300, 300, &offsetShiftMillis);
+	adjustGui->addToggle("SHOW OBJ SEQ", &showObjSequence);
+	adjustGui->addToggle("SHOW BLEND SHAPE", &showBlendShape);
+
+	adjustGui->addSpacer();
+	adjustGui->addToggle("DRAW WIREFRAME", &showWireframe);
+	adjustGui->addToggle("DRAW FILLED", &showFilled);
+
 	adjustGui->loadSettings("adjustments.xml");
-//	adjust->load
+
 }
 
-int lastFame = -1;
 void ofApp::update() {
     
     //int millis = snd.getPositionMS();
@@ -70,26 +75,18 @@ void ofApp::update() {
 	
 	//int offsetShift = ofMap(mouseX,0, ofGetWidth(), -500, 500, true);
 	//cout << offsetShift << endl;
-	int offsetShift = 193;
 
-	int millis = backdrop.getPosition() * backdrop.getDuration() * 1000 + (faceShiftClapMillis - videoClapMillis) + offsetShift;// - ;
+	int millis = backdrop.getPosition() * backdrop.getDuration() * 1000 + (faceShiftClapMillis - videoClapMillis) + offsetShiftMillis;// - ;
 	
-	/*
+	//BLENDSHAPE MESH
 	faceShiftFrame frame = player.getLineForTimeMillis(millis, true);
-	if(frame.frameNum == 184){
-		cout << "frame millis is " << frame.frameTimeMillis << endl;
-	}
-    if (frame.frameNum != lastFame){
-
+    if (frame.frameNum != lastFrame){
 		faceShift.parse(frame.frameString);
-        lastFame = frame.frameNum;
+        lastFrame = frame.frameNum;
     }
-	*/
 
+	//OBJ SEQUENCE MESH
 	curMesh = ofClamp( (millis/1000.0) * 30.0, 0,meshes.size()-1);
-
-	//player.getLineForTimeMillis(ofGetElapsedTimeMillis(), true);
-    //cout << frame.frameNum << endl;
 
 	backdrop.update();
 }
@@ -141,62 +138,14 @@ void ofApp::draw(){
 		baseCamera.setFov( rgbCalibration.getDistortedIntrinsics().getFov().y );
 		baseCamera.begin(ofRectangle(0,0,targetFbo.getWidth(),targetFbo.getHeight()));
 	}
-
-	ofPushMatrix();
-
-	ofVec3f neckTranslation(0.01883798, -1.526634, -0.6242198);
-	//float multiplier = ofMap(mouseY, 0, ofGetHeight(), 0, 75, true); 
-//	cout << multiplier << endl;
-	float multiplier = 0; 
-
-	neckTranslation *= multiplier;
-	/*
-	ofMatrix4x4 mat;
-	mat.translate(-neckTranslation);
-	mat *= faceShift.getRotationMatrix();
-	//mat.translate(neckTranslation);
-	mat.translate(faceShift.getPosition());
-	ofMultMatrix(mat);
-	*/
-
-	//this is alexander specific translation copied from the FBX file. Not convinced of the units
-	//ofMultMatrix(faceShift.getRotationMatrix());
-	//if(ofGetKeyPressed('n')){
-	//cout << "translating neck " << -neckTranslation*100 << endl;
-	//ofTranslate(-neckTranslation*100);
-//	ofMultMatrix(faceShift.getRotationMatrix().getInverse());
-	//ofTranslate(faceShift.getPosition());
-
-	///////////////////////////////
-	//DEBUG NECK STUFF
-	/*
-	ofPushStyle();
-	ofSetColor(255,0,0);
-	ofSphere(10);
-	ofSetColor(0,255,0);
-	ofSphere(neckTranslation*100,10);
-	ofPopStyle();
-	*/
-	////////////////////////////////
 	
-	ofSetColor(255);
-	ofEnableDepthTest();
-	ofEnableLighting();
-
-	//faceShift.getBlendMesh().draw();
+	if(showObjSequence){
+		drawObjSequence();
+	}
 	
-	ofDisableLighting();
-	ofSetColor(0);
-	//faceShift.getBlendMesh().drawWireframe();
-	ofPopMatrix();
-	
-	ofPushMatrix();
-	ofScale(-1,1,1);
-	ofTranslate(adjustments);
-
-	meshes[curMesh].drawWireframe();
-	ofPopMatrix();
-	//unityTestObjAssimp.drawFaces();
+	if(showBlendShape){
+		drawBlendShape();
+	}
 
 	ofDisableLighting();
 	ofDisableDepthTest();
@@ -217,6 +166,74 @@ void ofApp::draw(){
 	ofSetColor(255);
 	targetFbo.getTextureReference().draw(videoRect);
 
+}
+
+void ofApp::drawObjSequence(){
+	ofPushMatrix();
+	ofScale(-1,1,1);
+	ofTranslate(ofVec3f(-adjustments.x,adjustments.y,adjustments.z));
+
+	if(showFilled){
+		ofSetColor(0, 100);
+		ofEnableDepthTest();
+		ofEnableLighting();
+		meshes[curMesh].draw();
+	}
+
+	if(showWireframe){
+		ofDisableLighting();
+		ofSetColor(255, 100);
+		meshes[curMesh].drawWireframe();
+	}
+
+	
+	ofPopMatrix();
+}
+
+void ofApp::drawBlendShape(){
+	
+	ofPushMatrix();
+
+	//ofVec3f neckTranslation(0.01883798, -1.526634, -0.6242198);
+	//float multiplier = ofMap(mouseY, 0, ofGetHeight(), 0, 75, true); 
+//	float multiplier = 0; 
+//	neckTranslation *= multiplier;
+	
+	///////////////////////////////
+	//DEBUG NECK STUFF
+	/*
+	ofPushStyle();
+	ofSetColor(255,0,0);
+	ofSphere(10);
+	ofSetColor(0,255,0);
+	ofSphere(neckTranslation*100,10);
+	ofPopStyle();
+	*/
+	////////////////////////////////
+	
+	ofMatrix4x4 mat;
+	mat.translate(adjustments);
+//	mat.translate(-neckTranslation);
+	mat *= faceShift.getRotationMatrix();
+	//mat.translate(neckTranslation);
+	mat.translate(faceShift.getPosition());
+	ofMultMatrix(mat);
+
+
+	if(showFilled){
+		ofSetColor(0, 100);
+		ofEnableDepthTest();
+		ofEnableLighting();
+		faceShift.getBlendMesh().draw();
+	}
+
+	if(showWireframe){
+		ofDisableLighting();
+		ofSetColor(255, 100);
+		faceShift.getBlendMesh().drawWireframe();
+	}
+
+	ofPopMatrix();
 }
 
 void ofApp::exit(){
@@ -246,9 +263,7 @@ bool ofApp::loadCalibration(string rgbIntrinsicsPath,
 
 	ofxCv::loadMat(rotationDepthToRGB, rotationPath);
 	ofxCv::loadMat(translationDepthToRGB, translationPath);
-	//rotationDepthToRGB.at<double>(0,1) *= -1;
 
-	
 	//	Point2d fov = depthCalibration.getUndistortedIntrinsics().getFov();
 	//	fx = tanf(ofDegToRad(fov.x) / 2) * 2;
 	//	fy = tanf(ofDegToRad(fov.y) / 2) * 2;
