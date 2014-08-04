@@ -48,7 +48,6 @@ void ofApp::setup() {
 	targetFbo.allocate(rgbCalibration.getDistortedIntrinsics().getImageSize().width,
 					   rgbCalibration.getDistortedIntrinsics().getImageSize().height,GL_RGB);
 
-
 	adjustGui = new ofxUISuperCanvas("ADJUST", 0,0, 300,500);
 	adjustGui->addMinimalSlider("ADJUST X", -50, 50, &adjustments.x);
 	adjustGui->addMinimalSlider("ADJUST Y", -50, 50, &adjustments.y);
@@ -60,6 +59,7 @@ void ofApp::setup() {
 	adjustGui->addSpacer();
 	adjustGui->addToggle("DRAW WIREFRAME", &showWireframe);
 	adjustGui->addToggle("DRAW FILLED", &showFilled);
+	adjustGui->addMinimalSlider("ONION SKIN ALPHA", 0, 1.0, &videoAlpha);
 
 	adjustGui->loadSettings("adjustments.xml");
 
@@ -157,6 +157,12 @@ void ofApp::draw(){
 		baseCamera.end();
 	}
 
+	///draw an overlay to check alignment
+	ofPushStyle();
+	ofSetColor(255, videoAlpha*255);
+	backdrop.draw(0,0);
+	ofPopStyle();
+
 	targetFbo.end();
 
 	ofRectangle videoRect(0,0,targetFbo.getWidth(),targetFbo.getHeight());
@@ -165,7 +171,6 @@ void ofApp::draw(){
 
 	ofSetColor(255);
 	targetFbo.getTextureReference().draw(videoRect);
-
 }
 
 void ofApp::drawObjSequence(){
@@ -173,20 +178,8 @@ void ofApp::drawObjSequence(){
 	ofScale(-1,1,1);
 	ofTranslate(ofVec3f(-adjustments.x,adjustments.y,adjustments.z));
 
-	if(showFilled){
-		ofSetColor(0, 100);
-		ofEnableDepthTest();
-		ofEnableLighting();
-		meshes[curMesh].draw();
-	}
+	drawMesh(meshes[curMesh], ofFloatColor::red);
 
-	if(showWireframe){
-		ofDisableLighting();
-		ofSetColor(255, 100);
-		meshes[curMesh].drawWireframe();
-	}
-
-	
 	ofPopMatrix();
 }
 
@@ -219,21 +212,28 @@ void ofApp::drawBlendShape(){
 	mat.translate(faceShift.getPosition());
 	ofMultMatrix(mat);
 
+	drawMesh(faceShift.getBlendMesh(), ofFloatColor::green);
 
+	ofPopMatrix();
+}
+
+void ofApp::drawMesh(ofMesh& m, ofFloatColor color){
 	if(showFilled){
-		ofSetColor(0, 100);
+		ofSetColor(color);
 		ofEnableDepthTest();
 		ofEnableLighting();
-		faceShift.getBlendMesh().draw();
+		glDepthFunc(GL_LESS);
+		m.draw();
 	}
 
 	if(showWireframe){
 		ofDisableLighting();
-		ofSetColor(255, 100);
-		faceShift.getBlendMesh().drawWireframe();
+		ofSetColor(0);
+		glDepthFunc(GL_LEQUAL);
+		m.drawWireframe();
 	}
+	glDepthFunc(GL_LESS);
 
-	ofPopMatrix();
 }
 
 void ofApp::exit(){

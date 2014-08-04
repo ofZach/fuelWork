@@ -16,17 +16,23 @@ public:
 
 	void keyPressed(ofKeyEventArgs& args);
 
-	ofxFaceShift faceShift;
+	ofEasyCam cam;
+	ofCamera baseCamera;
+	ofLight light;
 	
 	bool useEasyCam;
+	ofxFaceShift faceShift;
 	faceShiftPlayer player;
     int lastFrame;
 
-	ofEasyCam cam;
-	ofCamera baseCamera;
-
-	ofLight light;
-    ofSoundPlayer snd;
+	ofxUISuperCanvas* adjustGui;
+	ofVec3f adjustments;
+	int offsetShiftMillis;
+	bool showWireframe;
+	bool showFilled;
+	bool showObjSequence;
+	bool showBlendShape;
+	float videoAlpha;
 
 	bool loadCalibration(string rgbIntrinsicsPath, 
 						 string depthIntrinsicsPath,
@@ -36,15 +42,7 @@ public:
     ofxCv::Calibration depthCalibration, rgbCalibration;
 	cv::Mat rotationDepthToRGB, translationDepthToRGB;
 
-	ofxUISuperCanvas* adjustGui;
-	ofVec3f adjustments;
-	int offsetShiftMillis;
-	
-	bool showWireframe;
-	bool showFilled;
 
-	bool showObjSequence;
-	bool showBlendShape;
 
 	ofVec2f depthPrincipalPoint;
 	ofVec2f depthFOV;
@@ -69,11 +67,11 @@ public:
 	ofMesh unityObjTestMesh;
 	ofImage testOverlay;
 	vector<ofMesh> meshes;
-	//ofVbo curObjMesh;
 	int curMesh;
 
 	void drawObjSequence();
 	void drawBlendShape();
+	void drawMesh(ofMesh& m, ofFloatColor color);
 
 };
 
