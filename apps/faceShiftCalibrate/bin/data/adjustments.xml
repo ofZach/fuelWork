@@ -28,12 +28,12 @@
 <Widget>
     <Kind>2</Kind>
     <Name>SHOW OBJ SEQ</Name>
-    <Value>0</Value>
+    <Value>1</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
     <Name>SHOW BLEND SHAPE</Name>
-    <Value>1</Value>
+    <Value>0</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
@@ -48,5 +48,5 @@
 <Widget>
     <Kind>25</Kind>
     <Name>ONION SKIN ALPHA</Name>
-    <Value>0.626712322</Value>
+    <Value>0.458904117</Value>
 </Widget>

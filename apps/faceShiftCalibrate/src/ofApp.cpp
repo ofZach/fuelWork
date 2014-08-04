@@ -22,17 +22,23 @@ void ofApp::setup() {
 			dataPath + "saturday_test_two/matrices/rotationDepthToRGB.yml", 
 			dataPath + "saturday_test_two/matrices/translationDepthToRGB.yml");
 	
+	string testSequenceFolder = dataPath + "alexander_test/";
+	string movieFile = testSequenceFolder + "20140725_AlexanderFunTimeSaturdayThree.mov";
+	string obmSequenceFolder = testSequenceFolder + "objsequence";
+	string fsAsciiSequenceFile = testSequenceFolder + "20140725_AlexanderFunTimeSaturdayThree.txt";
+	string blendshapeFolder = testSequenceFolder + "blendshape_objs";
+	string testDepthFrame = testSequenceFolder + "frametest_saturday_2.png";
+
 	faceShift.setup();
-	faceShift.import(dataPath + "OBJs");
-	string parseFile = dataPath + "saturday_test_two/20140725_AlexanderFunTimeSaturdayThree.txt";
-    lines = ofSplitString(ofBufferFromFile(parseFile), "\n");
-	player.parseFrames(parseFile);
+	faceShift.import(blendshapeFolder);
+    lines = ofSplitString(ofBufferFromFile(fsAsciiSequenceFile), "\n");
+	player.parseFrames(fsAsciiSequenceFile);
     faceShift.parse(lines[0]);
 	
-	testOverlay.loadImage(dataPath + "saturday_test_two/frametest_saturday_2.png");
+	testOverlay.loadImage(testDepthFrame);
 
 	curMesh = 0;
-	ofDirectory dir(dataPath + "saturday_test_two/objsequence");
+	ofDirectory dir(obmSequenceFolder);
 	dir.allowExt("obm");
 	dir.listDir();
 	meshes.resize(dir.numFiles());
@@ -41,7 +47,7 @@ void ofApp::setup() {
 		ofxBinaryMesh::load(dir.getPath(i), meshes[i]);
 	}
 
-	backdrop.loadMovie(dataPath + "saturday_test_two/20140725_AlexanderFunTimeSaturdayThree.mov");
+	backdrop.loadMovie(movieFile);
 	backdrop.play();
 	backdrop.setVolume(0);
 
