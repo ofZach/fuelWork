@@ -37,6 +37,8 @@ void ofApp::setup() {
 	
 	testOverlay.loadImage(testDepthFrame);
 
+	noseDrawDistance = 50;
+
 	curMesh = 0;
 	ofDirectory dir(obmSequenceFolder);
 	dir.allowExt("obm");
@@ -45,6 +47,19 @@ void ofApp::setup() {
 	for(int i = 0; i < dir.numFiles(); i++){
 		cout << "cur obm Is " << i << endl;
 		ofxBinaryMesh::load(dir.getPath(i), meshes[i]);
+		if(i == 0){
+
+			//find nose index
+			noseDrawPivot = meshes[0].getCentroid();
+			float maxZ = meshes[0].getVertices()[0].z;
+			noseVertexIndex = 0;
+			for(int v = 0; v < meshes[0].getNumVertices(); v++){
+				if(maxZ < meshes[0].getVertices()[v].z){
+					maxZ = meshes[0].getVertices()[v].z;
+					noseVertexIndex = v;
+				}
+			}
+		}
 	}
 
 	backdrop.loadMovie(movieFile);
@@ -93,6 +108,17 @@ void ofApp::update() {
 
 	//OBJ SEQUENCE MESH
 	curMesh = ofClamp( (millis/1000.0) * 30.0, 0,meshes.size()-1);
+
+	//update nose draw
+	nosePos = meshes[curMesh].getVertex(noseVertexIndex) + meshes[curMesh].getNormal(noseVertexIndex)*noseDrawDistance;
+	nosePos.x *= -1;
+	nosePos += adjustments;
+	for(int i = 0; i < noseDrawPoints.getNumVertices(); i++){
+		noseDrawPoints.getVertices()[i].rotate(1,noseDrawPivot,ofVec3f(0,1,0));
+		noseDrawPoints.getVertices()[i].y += 2;
+	}
+	noseDrawPoints.addVertex(nosePos);
+	noseDrawPoints.setMode(OF_PRIMITIVE_LINE_STRIP);
 
 	backdrop.update();
 }
@@ -155,6 +181,9 @@ void ofApp::draw(){
 
 	ofDisableLighting();
 	ofDisableDepthTest();
+
+	ofSetLineWidth(4);
+	noseDrawPoints.draw();
 
 	if(useEasyCam){
 		cam.end();

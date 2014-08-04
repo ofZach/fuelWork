@@ -25,6 +25,25 @@ public:
 	faceShiftPlayer player;
     int lastFrame;
 
+	ofVideoPlayer backdrop;
+	ofFbo targetFbo;
+
+	ofMesh unityObjTestMesh;
+	ofImage testOverlay;
+	vector<ofMesh> meshes;
+	int curMesh;
+
+	void drawObjSequence();
+	void drawBlendShape();
+	void drawMesh(ofMesh& m, ofFloatColor color);
+
+	//draw from nose;
+	//vector<ofVec3f> noseDrawPoints;
+	ofMesh noseDrawPoints;
+	ofIndexType noseVertexIndex;
+	float noseDrawDistance;
+	ofVec3f noseDrawPivot;
+	ofVec3f nosePos;
 	ofxUISuperCanvas* adjustGui;
 	ofVec3f adjustments;
 	int offsetShiftMillis;
@@ -54,24 +73,12 @@ public:
 
 	float depthToRGBRotation[9];
 	ofVec3f depthToRGBTranslation;
-//	ofMatrix4x4 depthToRGBRotation;
 	ofMatrix4x4 extrinsics;
 	ofMatrix4x4 getAdjustedMatrix();
 	
 	ofVec3f distortionK;
 	ofVec2f distortionP;
 
-	ofVideoPlayer backdrop;
-	ofFbo targetFbo;
-
-	ofMesh unityObjTestMesh;
-	ofImage testOverlay;
-	vector<ofMesh> meshes;
-	int curMesh;
-
-	void drawObjSequence();
-	void drawBlendShape();
-	void drawMesh(ofMesh& m, ofFloatColor color);
 
 };
 
