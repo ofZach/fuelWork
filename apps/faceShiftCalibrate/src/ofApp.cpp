@@ -115,7 +115,7 @@ void ofApp::update() {
 	nosePos += adjustments;
 	for(int i = 0; i < noseDrawPoints.getNumVertices(); i++){
 		noseDrawPoints.getVertices()[i].rotate(1,noseDrawPivot,ofVec3f(0,1,0));
-		noseDrawPoints.getVertices()[i].y += 2;
+		noseDrawPoints.getVertices()[i].y += .2;
 	}
 	noseDrawPoints.addVertex(nosePos);
 	noseDrawPoints.setMode(OF_PRIMITIVE_LINE_STRIP);
@@ -179,11 +179,20 @@ void ofApp::draw(){
 		drawBlendShape();
 	}
 
-	ofDisableLighting();
-	ofDisableDepthTest();
-
+	////////NOSE DRAW
 	ofSetLineWidth(4);
+	glColorMask(0,0,0,0); 
+	ofPushMatrix();
+	ofScale(-1,1,1);
+	ofTranslate(ofVec3f(-adjustments.x,adjustments.y,adjustments.z));
+	ofPopMatrix();
+	meshes[curMesh].draw();
+    glColorMask(1,1,1,1); 
+	ofSetColor(255);
 	noseDrawPoints.draw();
+	////////////////
+
+	ofDisableDepthTest();
 
 	if(useEasyCam){
 		cam.end();
