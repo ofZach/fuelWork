@@ -6,6 +6,10 @@ static string dataPath = "../../../sharedData/";
 
 void ofApp::setup() {
 	ofSetVerticalSync(true);
+
+	blob.loadBrushSource(dataPath+"strokes/blob_stroke.png");
+	//blob.loadBrushSource(dataPath+"strokes/spike_stroke.png");
+
 }
 
 void ofApp::update() {
@@ -14,12 +18,23 @@ void ofApp::update() {
 
 void ofApp::draw(){
 	ofBackground(ofColor::bisque);
+	
+	ofColor c = ofColor::bisque.getInverted();
+	c.setBrightness(128);
+	ofSetColor(c);
 
-	ofSetColor(ofColor::bisque.getInverted());
 	blob.blobMesh.draw();    
 
+	ofDisableDepthTest();
+
 	ofSetColor(ofColor::black);
-	blob.blobMesh.drawWireframe();
+	//blob.blobMesh.drawWireframe();
+
+	ofSetColor(ofColor::white, 100);
+	blob.traceDebug.draw();
+	if(ofGetKeyPressed('d')){
+		blob.debugLines.draw();
+	}
 }
 
 void ofApp::exit(){

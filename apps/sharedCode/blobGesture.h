@@ -15,6 +15,13 @@ class blobGesture {
 	void buildMesh();
 	void clear();
 
+	ofMesh traceDebug;
 	ofMesh blobMesh;
+	ofMesh debugLines;
+
+	void loadBrushSource(string path);
+	ofImage brushSource;
+	vector<float> leftSources;
+	vector<float> rightSources;
 
 };

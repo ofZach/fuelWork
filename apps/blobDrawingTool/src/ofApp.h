@@ -5,6 +5,16 @@
 #include "ofxCv.h"
 #include "blobGesture.h"
 
+//TODO
+//LINE QUALITY
+// --line thickness min max
+// --show outline while drawing
+// --circular end caps
+
+//ANIMATION
+// --capture animation
+
+
 class ofApp : public ofBaseApp{
   public:
 	void setup();
