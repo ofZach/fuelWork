@@ -5,7 +5,7 @@
 void blobGesture::addGesture(ofVec3f pos){
 	blobGesturePoint bgp;
 	bgp.pos = pos;
-	bgp.millis = ofGetElapsedTimeMillis();
+	bgp.millis = ofGetElapsedTimeMillis() - strokeStartTime;
 	traceDebug.addVertex(bgp.pos);
 	trace.push_back(bgp);
 }
@@ -15,22 +15,56 @@ void blobGesture::buildMesh(){
 	blobMesh.clear();
 	blobMesh.addVertex(trace[0].pos);
 	blobMesh.addVertex(trace[0].pos);
+	blobMesh.addTexCoord(trace[0].pos);
+	blobMesh.addTexCoord(trace[0].pos);
+	blobMesh.addNormal(ofVec3f());
+	blobMesh.addNormal(ofVec3f());
 
 	ofPolyline p;
-	for(int i = 1; i < trace.size(); i++){
-//		p.addVertex( trace[i].pos );
+	for(int i = 0; i < trace.size(); i++){
 		p.curveTo( trace[i].pos );
 	}	
 
 	ofPolyline resampled = p.getResampledBySpacing(5.0);
-//	ofPolyline resampled = p;
+	//build timing curve
+	//we need to retroactively apply the timing info from the base stroke
+	//into the reampled curve. Do this by stepping through the timed points 
+	//in the stroke and applying them through the curve
+	int curCurveIndex = 0;
+	timingCurve.clear();
+	timingCurve.resize(resampled.size());
+	for(int i = 1; i < trace.size(); i++){
+		float lastDist = FLT_MAX;
+		float deltaDist = -10;
+		int startCurveIndex = curCurveIndex;   
+		
+		cout << "SAMPLE " << i << " TIME " << trace[i-1].millis << " TO " << trace[i].millis << endl;
+		while(curCurveIndex < resampled.size()){
+			float dist = trace[i].pos.distance( resampled.getVertices()[curCurveIndex] );
+			deltaDist = dist - lastDist;
+			if(deltaDist > 0){
+				break;
+			}
+			curCurveIndex++;
+			lastDist = dist;
+		}
+		//curCurveIndex--;
+		cout << "	COVERS CURVE " << startCurveIndex << " TO " << curCurveIndex << endl;
+
+		//now reassign all the times based on their linear position along the curve
+		int curveSteps = curCurveIndex - startCurveIndex;
+		int startMillis = trace[i-1].millis;
+		int endMillis = trace[i].millis;
+		//normalized timing
+		for(int c = startCurveIndex; c < curCurveIndex; c++){
+			timingCurve[c] = ofMap( c, startCurveIndex, curCurveIndex,startMillis,endMillis) / trace.back().millis;
+			cout << "	TIME FOR INDEX " << c << " IS " << timingCurve[c] << endl;
+		}
+	}
+	
 	ofVec3f pastNormL;
 	ofVec3f pastNormR;
-
 	for(int i = 1; i < resampled.size(); i++){
-
-		//ofVec3f source = trace[i].pos; 
-		//ofVec3f past = trace[i-1].pos;
 
 		ofVec3f source = resampled.getVertices()[i]; 
 		ofVec3f past = resampled.getVertices()[i-1];
@@ -67,9 +101,13 @@ void blobGesture::buildMesh(){
 
 		//cout << "millis delta is " << millisDelta << " distance delta " << delta.length() << endl;
 		
+		//POSITION BASED TIMING
+		//float percentAlongCurve = (1.0*i) / (resampled.size()-1);
+		//MILLISECOND BASED TIMING
+
 		float imageIndexL = ofMap(i, 0, resampled.size()-1, 0, leftSources.size()-1, true);
 		float imageIndexR = ofMap(i, 0, resampled.size()-1, 0, rightSources.size()-1,true);
-
+		
 		float interpAlphaL = imageIndexL - floor(imageIndexL);
 		float interpAlphaR = imageIndexR - floor(imageIndexR);
 		
@@ -87,24 +125,44 @@ void blobGesture::buildMesh(){
 		blobMesh.addVertex(pointLeft);
 		blobMesh.addVertex(pointRight);
 
-		debugLines.addColor(ofFloatColor::white);
-		debugLines.addVertex(source);
+		blobMesh.addTexCoord( ofVec2f(source.x,source.y) );
+		blobMesh.addTexCoord( ofVec2f(source.x,source.y) );
 
+		float percentAlongCurve = timingCurve[i];
+		blobMesh.addNormal( ofVec3f(percentAlongCurve,0,0) );
+		blobMesh.addNormal( ofVec3f(percentAlongCurve,0,0) );
+
+		debugLines.addColor(ofFloatColor::white*percentAlongCurve);
+		debugLines.addVertex(source);
 		debugLines.addColor(ofFloatColor::purple);
 		debugLines.addVertex(pointLeft);
-
-		debugLines.addColor(ofFloatColor::white);
+		debugLines.addColor(ofFloatColor::white*percentAlongCurve);
 		debugLines.addVertex(source);
-
 		debugLines.addColor(ofFloatColor::green);
 		debugLines.addVertex(pointRight);
-
-
 	}
+}
+
+ofMesh blobGesture::generateAnimatedMesh(float percent){
+	ofMesh m;
+	//percent = ofMap(percent, 0, 1.0, 0, 1.0 + .1, true);
+	for(int i = 0; i < blobMesh.getNumVertices(); i++){
+		if(blobMesh.getNormals()[i].x < percent){
+			float expand = powf(ofMap(blobMesh.getNormals()[i].x, percent-.1,percent, 1.0, 0.0, true), 2.0);
+			expand = 1.0;
+			m.addVertex( ofVec3f(blobMesh.getTexCoord(i).getInterpolated( blobMesh.getVertex(i), expand)) );
+		}
+	}
+
+	m.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
+	return m;
 }
 
 void blobGesture::loadBrushSource(string path){
 	if(brushSource.loadImage(path)){
+
+		strokeDuration = ofGetElapsedTimeMillis() - strokeStartTime;
+		
 		leftSources.clear();
 		rightSources.clear();
 		leftSources.resize(brushSource.getWidth());
@@ -127,9 +185,7 @@ void blobGesture::loadBrushSource(string path){
 					break;
 				}
 			}
-
 		}
-
 	}
 }
 
@@ -142,4 +198,6 @@ void blobGesture::clear(){
 	blobMesh.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
 	traceDebug.setMode(OF_PRIMITIVE_LINE_STRIP);
 	debugLines.setMode(OF_PRIMITIVE_LINES);
+
+	strokeStartTime = ofGetElapsedTimeMillis();
 }
