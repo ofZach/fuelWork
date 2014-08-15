@@ -8,22 +8,22 @@
 <Widget>
     <Kind>25</Kind>
     <Name>ADJUST X</Name>
-    <Value>-25.684932709</Value>
+    <Value>-17.465751648</Value>
 </Widget>
 <Widget>
     <Kind>25</Kind>
     <Name>ADJUST Y</Name>
-    <Value>44.178081512</Value>
+    <Value>46.917808533</Value>
 </Widget>
 <Widget>
     <Kind>25</Kind>
     <Name>ADJUST Z</Name>
-    <Value>48.287670135</Value>
+    <Value>11.643833160</Value>
 </Widget>
 <Widget>
     <Kind>42</Kind>
     <Name>TIME OFFSET</Name>
-    <Value>152</Value>
+    <Value>-445</Value>
 </Widget>
 <Widget>
     <Kind>2</Kind>
@@ -48,5 +48,5 @@
 <Widget>
     <Kind>25</Kind>
     <Name>ONION SKIN ALPHA</Name>
-    <Value>0.458904117</Value>
+    <Value>0.585616410</Value>
 </Widget>

@@ -16,26 +16,28 @@ void ofApp::setup() {
 	light.enable();
 	light.setPosition(+500, +500, +500);
 
-	loadCalibration(
-			dataPath + "saturday_test_two/matrices/rgbCalib.yml", 
-			dataPath + "saturday_test_two/matrices/depthCalib.yml", 
-			dataPath + "saturday_test_two/matrices/rotationDepthToRGB.yml", 
-			dataPath + "saturday_test_two/matrices/translationDepthToRGB.yml");
-	
-	string testSequenceFolder = dataPath + "alexander_test/";
-	string movieFile = testSequenceFolder + "20140725_AlexanderFunTimeSaturdayThree.mov";
-	string obmSequenceFolder = testSequenceFolder + "objsequence";
-	string fsAsciiSequenceFile = testSequenceFolder + "20140725_AlexanderFunTimeSaturdayThree.txt";
-	string blendshapeFolder = testSequenceFolder + "blendshape_objs";
-	string testDepthFrame = testSequenceFolder + "frametest_saturday_2.png";
 
-	faceShift.setup();
-	faceShift.import(blendshapeFolder);
-    lines = ofSplitString(ofBufferFromFile(fsAsciiSequenceFile), "\n");
-	player.parseFrames(fsAsciiSequenceFile);
-    faceShift.parse(lines[0]);
+	string testSequenceFolder = dataPath + "jackie_002/";
+
+	loadCalibration(
+			testSequenceFolder + "matrices/rgbCalib.yml", 
+			testSequenceFolder + "matrices/depthCalib.yml", 
+			testSequenceFolder + "matrices/rotationDepthToRGB.yml", 
+			testSequenceFolder + "matrices/translationDepthToRGB.yml");
 	
-	testOverlay.loadImage(testDepthFrame);
+	string movieFile = testSequenceFolder + "Blackmagic Cinema Camera_1_2014-07-30_1713_C0000.mov";
+	string obmSequenceFolder = testSequenceFolder + "obm";
+//	string fsAsciiSequenceFile = testSequenceFolder + "20140725_AlexanderFunTimeSaturdayThree.txt";
+//	string blendshapeFolder = testSequenceFolder + "blendshape_objs";
+//	string testDepthFrame = testSequenceFolder + "frametest_saturday_2.png";
+
+//	faceShift.setup();
+//	faceShift.import(blendshapeFolder);
+//	lines = ofSplitString(ofBufferFromFile(fsAsciiSequenceFile), "\n");
+//	player.parseFrames(fsAsciiSequenceFile);
+//	faceShift.parse(lines[0]);
+	
+//	testOverlay.loadImage(testDepthFrame);
 
 	noseDrawDistance = 50;
 
@@ -73,7 +75,7 @@ void ofApp::setup() {
 	adjustGui->addMinimalSlider("ADJUST X", -50, 50, &adjustments.x);
 	adjustGui->addMinimalSlider("ADJUST Y", -50, 50, &adjustments.y);
 	adjustGui->addMinimalSlider("ADJUST Z", -50, 50, &adjustments.z);
-	adjustGui->addIntSlider("TIME OFFSET", -300, 300, &offsetShiftMillis);
+	adjustGui->addIntSlider("TIME OFFSET", -700, 700, &offsetShiftMillis);
 	adjustGui->addToggle("SHOW OBJ SEQ", &showObjSequence);
 	adjustGui->addToggle("SHOW BLEND SHAPE", &showBlendShape);
 
@@ -100,11 +102,13 @@ void ofApp::update() {
 	int millis = backdrop.getPosition() * backdrop.getDuration() * 1000 + (faceShiftClapMillis - videoClapMillis) + offsetShiftMillis;// - ;
 	
 	//BLENDSHAPE MESH
+	/*
 	faceShiftFrame frame = player.getLineForTimeMillis(millis, true);
     if (frame.frameNum != lastFrame){
 		faceShift.parse(frame.frameString);
         lastFrame = frame.frameNum;
     }
+	*/
 
 	//OBJ SEQUENCE MESH
 	curMesh = ofClamp( (millis/1000.0) * 30.0, 0,meshes.size()-1);
@@ -128,10 +132,15 @@ void ofApp::draw(){
 	targetFbo.begin();
 	ofClear(0,0,0,0);
 
+	float videoScale = targetFbo.getWidth() / backdrop.getWidth();
+	
 	///draw the video layer behind
 	ofPushStyle();
+	ofPushMatrix();
 	ofSetColor(255);
+	ofScale(videoScale,videoScale);
 	backdrop.draw(0,0);
+	ofPopMatrix();
 	ofPopStyle();
 	////////////////////
 
@@ -175,9 +184,10 @@ void ofApp::draw(){
 		drawObjSequence();
 	}
 	
-	if(showBlendShape){
-		drawBlendShape();
-	}
+	//if(showBlendShape){
+	//	drawBlendShape();
+	//}
+
 
 	////////NOSE DRAW
 	ofSetLineWidth(4);
@@ -204,7 +214,9 @@ void ofApp::draw(){
 	///draw an overlay to check alignment
 	ofPushStyle();
 	ofSetColor(255, videoAlpha*255);
+	ofScale(videoScale,videoScale);
 	backdrop.draw(0,0);
+	ofPopMatrix();
 	ofPopStyle();
 
 	targetFbo.end();

@@ -21,6 +21,8 @@ class testApp : public ofBaseApp{
 	void exit();
 
 	
+	void convertObj(string path);
+
 	ofxUISuperCanvas* gui;
 
 };
