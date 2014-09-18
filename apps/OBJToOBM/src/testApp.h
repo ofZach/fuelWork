@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofxUI.h"
 
 class testApp : public ofBaseApp{
   public:
@@ -23,6 +22,5 @@ class testApp : public ofBaseApp{
 	
 	void convertObj(string path);
 
-	ofxUISuperCanvas* gui;
 
 };
