@@ -8,17 +8,17 @@
 <Widget>
     <Kind>25</Kind>
     <Name>ADJUST X</Name>
-    <Value>-17.465751648</Value>
+    <Value>-17.808219910</Value>
 </Widget>
 <Widget>
     <Kind>25</Kind>
     <Name>ADJUST Y</Name>
-    <Value>46.917808533</Value>
+    <Value>50.000000000</Value>
 </Widget>
 <Widget>
     <Kind>25</Kind>
     <Name>ADJUST Z</Name>
-    <Value>11.643833160</Value>
+    <Value>7.534247398</Value>
 </Widget>
 <Widget>
     <Kind>42</Kind>
@@ -48,5 +48,5 @@
 <Widget>
     <Kind>25</Kind>
     <Name>ONION SKIN ALPHA</Name>
-    <Value>0.585616410</Value>
+    <Value>0.633561671</Value>
 </Widget>

@@ -19,8 +19,8 @@ class testApp : public ofBaseApp{
 	void gotMessage(ofMessage msg);
 	void exit();
 
-	
-	void convertObj(string path);
+	void recurseForOBJ(string path, string root);
+	void convertObj(string path, string root);
 
 
 };
