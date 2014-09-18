@@ -65,28 +65,40 @@ void testApp::gotMessage(ofMessage msg){
 
 //--------------------------------------------------------------
 void testApp::dragEvent(ofDragInfo dragInfo){ 
+
 	for(int i = 0; i < dragInfo.files.size(); i++){
-		if( ofFile(dragInfo.files[i]).isDirectory() ) {
-			ofDirectory dir(dragInfo.files[i]);
-			dir.allowExt("obj");
-			dir.listDir();
-			for(int f = 0; f < dir.numFiles(); f++){
-				convertObj(dir.getPath(f));
-			}
-		}
-		else if( ofToLower(ofFilePath::getFileExt(dragInfo.files[i])) == "obj" ){
-			convertObj( dragInfo.files[i] );
-		}
-		else{
-			cout << dragInfo.files[i] << " is not a directory or an obj file" << endl;
-		}
+		recurseForOBJ(dragInfo.files[i], dragInfo.files[i]);
 	}
 }
 
-void testApp::convertObj(string path){
-	string pathWithoutExtension = ofFilePath::removeExt(path);
+void testApp::recurseForOBJ(string path, string root){
+	if( ofFile(path).isDirectory() ) {
+		cout << "***SEARCHING " << path << endl;
+		ofDirectory dir(path);
+		dir.listDir();
+		for(int f = 0; f < dir.numFiles(); f++){
+			recurseForOBJ(dir.getPath(f), root);
+		}
+	}
+	else if(ofToLower(ofFilePath::getFileExt(path)) == "obj"){
+		cout << "CONVERTING " << path << " with root " << root << endl;
+		convertObj(path, root);
+	}
+}
+
+void testApp::convertObj(string path, string root){
+	string outputPath = path;	
+	ofStringReplace(outputPath,root,string(root+"_OBMS/") );
+	string pathWithoutExtension = ofFilePath::removeExt(outputPath);
+
+	string enclosingDirectory = ofFilePath::getEnclosingDirectory(outputPath);
+	if(!ofDirectory(enclosingDirectory).exists()){
+		ofDirectory(enclosingDirectory).create(true);
+	}
+	cout << "OBM Enclosing Directory is  " << enclosingDirectory << endl;
+
 	ofMesh m;
-	cout << "LOADING " << path << endl;
+	cout << "LOADING " << outputPath << endl;
 	ofxObjLoader::load_oldway( path, m, false);
 	cout << "SAVING " << pathWithoutExtension << ".obm" << endl;
 	ofxBinaryMesh::save( pathWithoutExtension + ".obm", m);

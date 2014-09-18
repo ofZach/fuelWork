@@ -1,6 +1,4 @@
 #include "ofApp.h"
-#include "ofxObjLoader.h"
-#include "ofxBinaryMesh.h"
 
 static string dataPath = "../../../sharedData/";
 
